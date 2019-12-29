@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.MyUserMapper">
+  <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.MyUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="enabled" jdbcType="TINYINT" property="enabled" />
+    <result column="locked" jdbcType="TINYINT" property="locked" />
+    <collection property="roles" javaType="ArrayList"
+                column="id"
+                ofType="com.study.scoremanage.Model.Role"
+                select="com.study.scoremanage.Mapper.RoleMapper.selectRolesByUserId"
+                fetchType="lazy">
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, `password`, enabled, locked
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from myuser
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from myuser
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.study.scoremanage.Model.MyUser" useGeneratedKeys="true">
+    insert into myuser (username, `password`, enabled,
+      locked)
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{enabled,jdbcType=TINYINT},
+      #{locked,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.study.scoremanage.Model.MyUser" useGeneratedKeys="true">
+    insert into myuser
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="enabled != null">
+        enabled,
+      </if>
+      <if test="locked != null">
+        locked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        #{enabled,jdbcType=TINYINT},
+      </if>
+      <if test="locked != null">
+        #{locked,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.study.scoremanage.Model.MyUser">
+    update myuser
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=TINYINT},
+      </if>
+      <if test="locked != null">
+        locked = #{locked,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.study.scoremanage.Model.MyUser">
+    update myuser
+    set username = #{username,jdbcType=VARCHAR},
+      `password` = #{password,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=TINYINT},
+      locked = #{locked,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--手动添加-->
+  <select id="selectMyUser" parameterType="com.study.scoremanage.Model.MyUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from myuser
+    <where>
+      <if test="id != null and id!=''">
+        and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="username != null and username!=''">
+        and username = #{username,jdbcType=VARCHAR}
+      </if>
+      <if test="password != null and password!=''">
+        and password = #{password,jdbcType=VARCHAR}
+      </if>
+      <if test="enabled != null and enabled!=''">
+        and enabled = #{enabled,jdbcType=TINYINT}
+      </if>
+      <if test="locked != null and locked!=''">
+        and locked = #{locked,jdbcType=TINYINT}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteMyUser" parameterType="com.study.scoremanage.Model.MyUser">
+    delete from myuser
+    where
+    <where>
+      <if test="id != null and id!=''">
+        and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="username != null and username!=''">
+        and username = #{username,jdbcType=VARCHAR}
+      </if>
+      <if test="password != null and password!=''">
+        and password = #{password,jdbcType=VARCHAR}
+      </if>
+      <if test="enabled != null and enabled!=''">
+        and enabled = #{enabled,jdbcType=TINYINT}
+      </if>
+      <if test="locked != null and locked!=''">
+        and locked = #{locked,jdbcType=TINYINT}
+      </if>
+    </where>
+  </delete>
+
+  <select id="loadMyUserByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from myuser
+    where myuser.username = #{username}
+  </select>
+</mapper>

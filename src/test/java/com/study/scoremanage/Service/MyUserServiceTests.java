@@ -1,0 +1,21 @@
+package com.study.scoremanage.Service;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MyUserServiceTests {
+    @Autowired
+    MyUserService myUserService;
+
+    @Test
+    public void loadUserByUsernameTest()
+    {
+        //ystem.out.println(myUserService.loadUserByUsername("user").getPassword());
+        System.out.println(myUserService.selectByPrimaryKey(1L).toString());
+    }
+}

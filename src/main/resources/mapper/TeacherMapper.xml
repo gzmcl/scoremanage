@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.TeacherMapper">
+  <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.Teacher">
+    <id column="id" jdbcType="BIGINT" property="tea_id" />
+    <result column="tno" jdbcType="VARCHAR" property="tno" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="entrytime" jdbcType="DATE" property="entrytime" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, tno, `name`, title, entrytime, createtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from teacher
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectTeacher" parameterType="com.study.scoremanage.Model.Teacher" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from teacher
+    <where>
+      <if test="tea_id!=null and tea_id!=''">
+        id = #{tea_id,jdbcType=BIGINT}
+      </if>
+      <if test="tno != null and tno!=''">
+        #{tno,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name!=''">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null and title!=''">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="entrytime != null and entrytime!=''">
+        #{entrytime,jdbcType=DATE},
+      </if>
+      <if test="createtime != null and createtime!=''">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from teacher
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="tea_id" parameterType="com.study.scoremanage.Model.Teacher" useGeneratedKeys="true">
+    insert into teacher (tno, `name`, title, 
+      entrytime, createtime)
+    values (#{tno,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{entrytime,jdbcType=DATE}, #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="tea_id" parameterType="com.study.scoremanage.Model.Teacher" useGeneratedKeys="true">
+    insert into teacher
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tno != null">
+        tno,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="entrytime != null">
+        entrytime,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tno != null">
+        #{tno,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="entrytime != null">
+        #{entrytime,jdbcType=DATE},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.study.scoremanage.Model.Teacher">
+    update teacher
+    <set>
+      <if test="tno != null">
+        tno = #{tno,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="entrytime != null">
+        entrytime = #{entrytime,jdbcType=DATE},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{tea_id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.study.scoremanage.Model.Teacher">
+    update teacher
+    set tno = #{tno,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      entrytime = #{entrytime,jdbcType=DATE},
+      createtime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{tea_id,jdbcType=BIGINT}
+  </update>
+</mapper>

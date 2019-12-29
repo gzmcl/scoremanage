@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.StudentMapper">
+    <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.Student">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="sno" jdbcType="VARCHAR" property="sno" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sex" jdbcType="VARCHAR" property="sex" />
+        <result column="birthday" jdbcType="DATE" property="birthday" />
+        <result column="qq" jdbcType="VARCHAR" property="qq" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="banjiname" jdbcType="VARCHAR" property="banjiname" />
+        <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+        <collection property="academicrecords" javaType="ArrayList"
+                    column="id"
+                    ofType="com.study.scoremanage.Model.Academicrecord"
+                    select="com.study.scoremanage.Mapper.AcademicrecordMapper.selectByStudentId"
+                    fetchType="lazy">
+        </collection>
+    </resultMap>
+    <!--<sql id="Base_Column_List">-->
+        <!--id, sno, `name`, sex, birthday, qq, phone, banjiname, createTime-->
+    <!--</sql>-->
+
+    <select id="selectStudent" parameterType="com.study.scoremanage.Model.Student" resultMap="BaseResultMap">
+        select
+        <!--<include refid="Base_Column_List" />-->
+        *
+        from student
+        <where><!--where可以去除第一个空格或者OR-->
+            <if test="id!=null and id!=''">
+                and id = #{id}
+            </if>
+
+            <if test="sno!=null and sno!=''">
+                and sno=#{sno}
+            </if>
+
+            <if test="name!=null and name!=''">
+                and name like '%${name}%'
+            </if>
+
+            <if test="sex!=null and sex!=''">
+                and sex = #{sex}
+            </if>
+
+            <!--<if test="birthday!=null and birthday!=''">-->
+                <!--and birthday like '%${birthday}%'-->
+            <!--</if>-->
+
+            <if test="qq!=null and qq!=''">
+                and qq like '%${qq}%'
+            </if>
+
+            <if test="phone!=null and phone!=''">
+                and phone like '%${phone}%'
+            </if>
+
+            <if test="banjiname!=null and banjiname!=''">
+                and banjiname = #{banjiname}
+            </if>
+        </where>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <!--<include refid="Base_Column_List" />-->
+        *
+        from student
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteStudent" parameterType="com.study.scoremanage.Model.Student">
+        delete from student
+        <where>
+            <if test="id!=null and id!=''">
+            and id = #{id}
+            </if>
+
+            <if test="sno!=null and sno!=''">
+                and sno=#{sno}
+            </if>
+
+            <if test="name!=null and name!=''">
+                and name like '%${name}%'
+            </if>
+
+            <if test="sex!=null and sex!=''">
+                and sex = #{sex}
+            </if>
+
+            <!--<if test="birthday!=null and birthday!=''">-->
+            <!--and birthday like '%${birthday}%'-->
+            <!--</if>-->
+
+            <if test="qq!=null and qq!=''">
+                and qq like '%${qq}%'
+            </if>
+
+            <if test="phone!=null and phone!=''">
+                and phone like '%${phone}%'
+            </if>
+
+            <if test="banjiname!=null and banjiname!=''">
+                and banjiname = #{banjiname}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteStudentById" parameterType="Long">
+        delete from student
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insertStudent" parameterType="com.study.scoremanage.Model.Student" >
+        insert into student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="sno != null">
+        sno,
+        </if>
+        <if test="name != null">
+        `name`,
+        </if>
+        <if test="sex != null">
+        sex,
+        </if>
+        <if test="birthday != null">
+        birthday,
+        </if>
+        <if test="qq != null">
+        qq,
+        </if>
+        <if test="phone != null">
+        phone,
+        </if>
+        <if test="banjiname != null">
+        banjiname,
+        </if>
+        <if test="createtime != null">
+        createTime,
+        </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="sno != null">
+        #{sno,jdbcType=VARCHAR},
+        </if>
+        <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+        </if>
+        <if test="birthday != null">
+        #{birthday,jdbcType=DATE},
+        </if>
+        <if test="qq != null">
+        #{qq,jdbcType=VARCHAR},
+        </if>
+        <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+        </if>
+        <if test="banjiname != null">
+        #{banjiname,jdbcType=VARCHAR},
+        </if>
+        <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+        </if>
+        </trim>
+    </insert>
+    <update id="updateStudentById" parameterType="com.study.scoremanage.Model.Student">
+        update student
+        <set>
+            <if test="sno != null">
+                sno = #{sno,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=DATE},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="banjiname != null">
+                banjiname = #{banjiname,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                createTime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

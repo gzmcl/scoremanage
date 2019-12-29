@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.AcademicrecordMapper">
+    <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.Academicrecord">
+        <result column="a_id" jdbcType="BIGINT" property="aca_id"/>
+        <result column="courseid" jdbcType="VARCHAR" property="courseid"/>
+        <result column="studentid" jdbcType="VARCHAR" property="studentid"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="createtime" jdbcType="DATE" property="createtime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    a_id, courseid, studentid, score, createtime
+  </sql>
+    <insert id="insert" parameterType="com.study.scoremanage.Model.Academicrecord">
+    insert into academicrecord (a_id, courseid, studentid,
+      score, createtime)
+    values (#{aca_id,jdbcType=BIGINT}, #{courseid,jdbcType=VARCHAR}, #{studentid,jdbcType=VARCHAR},
+      #{score,jdbcType=INTEGER}, #{createtime,jdbcType=DATE})
+  </insert>
+    <insert id="insertSelective" parameterType="com.study.scoremanage.Model.Academicrecord">
+        insert into academicrecord
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseid != null">
+                courseid,
+            </if>
+            <if test="studentid != null">
+                studentid,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+            <if test="createtime != null">
+                createtime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseid != null">
+                #{courseid,jdbcType=VARCHAR},
+            </if>
+            <if test="studentid != null">
+                #{studentid,jdbcType=VARCHAR},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from Academicrecord
+        where a_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from Academicrecord
+    where a_id = #{aca_id,jdbcType=BIGINT}
+  </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.study.scoremanage.Model.Academicrecord">
+        update Academicrecord
+        <set>
+            <if test="Academicrecordno != null">
+                Academicrecordno = #{Academicrecordno,jdbcType=VARCHAR},
+            </if>
+            <if test="Academicrecordname != null">
+                Academicrecordname = #{Academicrecordname,jdbcType=VARCHAR},
+            </if>
+            <if test="teacherid != null">
+                teacherid = #{teacherid,jdbcType=BIGINT},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=DATE},
+            </if>
+        </set>
+        where a_id = #{aca_id,jdbcType=BIGINT}
+    </update>
+    <!--以下为手动添加内容-->
+    <select id="selectAcademicrecord" parameterType="com.study.scoremanage.Model.Academicrecord"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from Academicrecord
+        <where>
+            <if test="aca_id != null and aca_id!=''">
+                a_id = #{aca_id,jdbcType=BIGINT},
+            </if>
+            <if test="courseid != null and courseid!=''">
+                courseid = #{courseid,jdbcType=VARCHAR}
+            </if>
+            <if test="studentid != null and studentid!=''">
+                studentid = #{studentid,jdbcType=VARCHAR},
+            </if>
+            <if test="score != null and score!=''">
+                score = #{score,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null and createtime!=''">
+                createtime = #{createtime,jdbcType=DATE},
+            </if>
+        </where>
+    </select>
+    <select id="selectByStudentId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from Academicrecord
+        <where>
+            <if test="id != null and id!=''">
+                and studentid = #{id,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="selectByCourseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from Academicrecord
+        <where>
+            <if test="id != null and id!=''">
+                and courseid = #{id,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

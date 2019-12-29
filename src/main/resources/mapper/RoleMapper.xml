@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.Role">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nameZh" jdbcType="VARCHAR" property="nameZh" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`,nameZh
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.study.scoremanage.Model.Role" useGeneratedKeys="true">
+    insert into role (`name`,nameZh)
+    values (#{name,jdbcType=VARCHAR},#{nameZh,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.study.scoremanage.Model.Role" useGeneratedKeys="true">
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="nameZh != null">
+        nameZh,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameZh != null">
+        #{nameZh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.study.scoremanage.Model.Role">
+    update role
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameZh != null">
+        nameZh = #{nameZh,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.study.scoremanage.Model.Role">
+    update role
+    set
+      `name` = #{name,jdbcType=VARCHAR},
+      nameZh = #{nameZh,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--以下为手动添加内容-->
+  <select id="selectRole" parameterType="com.study.scoremanage.Model.Role" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from role
+    <where>
+      <if test="id != null and id!=''">
+        and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="name != null and name!=''">
+        and `name` = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="nameZh != null and nameZh!=''">
+        and nameZh = #{nameZh,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <select id="selectRolesByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    *
+    from role r,user_role ur
+    where r.id = ur.role_id and ur.user_id = #{id,jdbcType=BIGINT}
+    <!--<where>-->
+      <!--<if test="id != null and id!=''">-->
+        <!--and id = #{id,jdbcType=BIGINT}-->
+      <!--</if>-->
+      <!--<if test="name != null and name!=''">-->
+        <!--and `name` = #{name,jdbcType=VARCHAR}-->
+      <!--</if>-->
+    <!--</where>-->
+  </select>
+  <select id="selectRolesByRoleName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from role
+    where `name` = #{rolename,jdbcType=VARCHAR}
+  </select>
+</mapper>

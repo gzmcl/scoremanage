@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.scoremanage.Mapper.CourseMapper">
+    <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.Course">
+        <id column="id" property="cou_id"/>
+        <result column="coursename" property="coursename"/>
+        <result column="term" property="term"/>
+        <result column="banjiname" property="banjiname"/>
+        <result column="createtime" jdbcType="DATE" property="createtime"/>
+        <association property="teacher" javaType="com.study.scoremanage.Model.Teacher"
+                     column="teacherid"
+                     select="com.study.scoremanage.Mapper.TeacherMapper.selectByPrimaryKey">
+            <id column="id" jdbcType="BIGINT" property="tea_id" />
+            <result column="tno" jdbcType="VARCHAR" property="tno" />
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="title" jdbcType="VARCHAR" property="title" />
+            <result column="entrytime" jdbcType="DATE" property="entrytime" />
+            <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        </association>
+        <collection property="academicrecords" javaType="ArrayList"
+                    column="cou_id"
+                    ofType="com.study.scoremanage.Model.Academicrecord"
+                    select="com.study.scoremanage.Mapper.AcademicrecordMapper.selectByCourseId"
+                    fetchType="lazy">
+            <!--<id column="a_id" jdbcType="BIGINT" property="aca_id" />-->
+            <!--<result column="score" jdbcType="INTEGER" property="score" />-->
+            <!--<result column="createtime" jdbcType="DATE" property="createtime" />-->
+            <!--<result column="id" jdbcType="VARCHAR" property="courseid" />-->
+            <!--<result column="studentid" jdbcType="VARCHAR" property="studentid" />-->
+        </collection>
+    </resultMap>
+    <resultMap id="teacherResultMap" type="com.study.scoremanage.Model.Teacher">
+        <id property="tea_id" column="id"/>
+        <result property="tno" column="tno" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="entrytime" column="entrytime" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime"  jdbcType="DATE"/>
+    </resultMap>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    *
+    from course
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <select id="selectCourse" parameterType="com.study.scoremanage.Model.Course" resultMap="BaseResultMap">
+        select
+        *
+        from course
+        <where>
+            <if test="cou_id != null and cou_id!=''">
+                and id = #{cou_id,jdbcType=BIGINT}
+            </if>
+            <if test="coursename != null and coursename!=''">
+                and coursename = #{coursename,jdbcType=VARCHAR}
+            </if>
+            <if test="term != null and term!=''">
+                and term = #{term,jdbcType=VARCHAR}
+            </if>
+            <if test="banjiname != null and banjiname!=''">
+                and banjiname = #{banjiname,jdbcType=VARCHAR}
+            </if>
+            <if test="teacher != null and teacher!=''">
+                and teacherid = #{teacher.id,jdbcType=BIGINT}
+            </if>
+            <if test="createtime != null and createtime!=''">
+                and createtime = #{createtime,jdbcType=DATE}
+            </if>
+        </where>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from course
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" keyColumn="id" keyProperty="cou_id" parameterType="com.study.scoremanage.Model.Course"
+            useGeneratedKeys="true">
+    insert into course (coursename, term, banjiname
+    <if test="teacher != null">
+        ,teacherid
+    </if>
+      ,createtime)
+    values (#{coursename,jdbcType=VARCHAR}, #{term,jdbcType=VARCHAR}, #{banjiname,jdbcType=VARCHAR}
+    <if test="teacher != null">
+      ,#{teacher.id,jdbcType=BIGINT}
+    </if>
+      ,#{createtime,jdbcType=DATE})
+  </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="cou_id" parameterType="com.study.scoremanage.Model.Course"
+            useGeneratedKeys="true">
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coursename != null">
+                coursename,
+            </if>
+            <if test="term != null">
+                term,
+            </if>
+            <if test="banjiname != null">
+                banjiname,
+            </if>
+            <if test="teacher != null">
+                teacherid,
+            </if>
+            <if test="createtime != null">
+                createtime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coursename != null">
+                #{coursename,jdbcType=VARCHAR},
+            </if>
+            <if test="term != null">
+                #{term,jdbcType=VARCHAR},
+            </if>
+            <if test="banjiname != null">
+                #{banjiname,jdbcType=VARCHAR},
+            </if>
+            <if test="teacher != null">
+                #{teacher.id,jdbcType=BIGINT},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.study.scoremanage.Model.Course">
+        update course
+        <set>
+            <if test="coursename != null">
+                coursename = #{coursename,jdbcType=VARCHAR},
+            </if>
+            <if test="term != null">
+                term = #{courseno,jdbcType=VARCHAR},
+            </if>
+            <if test="banjiname != null">
+                banjiname = #{banjiname,jdbcType=VARCHAR},
+            </if>
+            <if test="teacher != null">
+                teacherid = #{teacher.id,jdbcType=BIGINT},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{cou_id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.study.scoremanage.Model.Course">
+    update course
+    set coursename = #{coursename,jdbcType=VARCHAR},
+      term = #{term,jdbcType=VARCHAR},
+      banjiname = #{banjiname,jdbcType=VARCHAR},
+      teacherid = #{teacher.id,jdbcType=BIGINT},
+      createtime = #{createtime,jdbcType=DATE}
+    where id = #{cou_id,jdbcType=BIGINT}
+  </update>
+</mapper>
