@@ -387,7 +387,341 @@
         //
         }
     11、安装postman，设置相关测试collection。
-        （1）
+        （1）new collection设置相关参数
+        （2）Add request设置，添加各资源的增删改查模拟测试。
+        （3）查询，使用Get模式，输入网址，不需添加任何参数（启用spring security除外）
+        直接可点“send”测试。
+        （4）增加记录，使用post模式，设置body、raw,输入json（可复制查询结果后修改），
+        格式修改为json,点“send”测试。
+        （5）修改记录，使用put模式，删除记录使用delete模式。
+五、启用spring security进行登录验证。
+    1、引入spirng security依赖包。
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+    2、创建数据表：myuser、role、user_role表
+        CREATE TABLE myuser
+        (
+          id       BIGINT AUTO_INCREMENT
+            PRIMARY KEY,
+          username VARCHAR(128) NULL,
+          password VARCHAR(256) NULL,
+          enabled  TINYINT      NULL,
+          locked   TINYINT      NULL
+        )
+        CREATE TABLE role
+        (
+          id     BIGINT AUTO_INCREMENT
+            PRIMARY KEY,
+          name   VARCHAR(255) NULL,
+          nameZh VARCHAR(255) NULL
+        )
+        CREATE TABLE user_role
+        (
+          user_id BIGINT NULL,
+          role_id BIGINT NULL
+        )
+    3、使用mybatis generator插件生成myuser、role、user_role三张表的增删改查
+     的model、mapper以及mapper配置文件。
+    4、综合考虑三张表对应的model的关联关系，设定以myuser关联role为关联方向
+     修改myuser的model：
+        @Slf4j
+        @Data
+        public class MyUser implements UserDetails{
+            private Long id;
+            private String username;
+            private String password;
+            private Boolean enabled;
+            private Boolean locked;
+            private List<Role> roles;
+        }
+    5、spring security中使用UserDetails作为接口存放用户信息，
+     暂时不考虑相关内容，上述文件编译时报错，需要修改，添加部分
+     接口实现，结果如下：
+        @Slf4j
+        @Data
+        public class MyUser implements UserDetails{
+            private Long id;
+            private String username;
+            private String password;
+            private Boolean enabled;
+            private Boolean locked;
+            private List<Role> roles;
+
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                for(Role role:roles){
+                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+                    log.info("用户角色权限："+role.getName());
+                }
+                return authorities;
+            }
+            @Override
+            public boolean isAccountNonExpired() {
+                return true;
+            }
+            @Override
+            public boolean isAccountNonLocked() {
+                if(locked == null)
+                    return true;
+                return !locked;
+            }
+            @Override
+            public boolean isCredentialsNonExpired() {
+                return true;
+            }
+            @Override
+            public boolean isEnabled() {
+                if(enabled == null)
+                    return false;
+                return enabled;
+            }
+            public Long getId() {
+                return id;
+            }
+            @Override
+            public String getUsername() {
+                return username;
+            }
+            @Override
+            public String getPassword() {
+                return password;
+            }
+        }
+     6、修改相关的Mapper及其配置文件，配置文件关键代码如下：
+        <!--  MyUserMapper.xml关键代码   -->
+        <resultMap id="BaseResultMap" type="com.study.scoremanage.Model.MyUser">
+            <id column="id" jdbcType="BIGINT" property="id" />
+            <result column="username" jdbcType="VARCHAR" property="username" />
+            <result column="password" jdbcType="VARCHAR" property="password" />
+            <result column="enabled" jdbcType="TINYINT" property="enabled" />
+            <result column="locked" jdbcType="TINYINT" property="locked" />
+            <collection property="roles" javaType="ArrayList"
+                        column="id"
+                        ofType="com.study.scoremanage.Model.Role"
+                        select="com.study.scoremanage.Mapper.RoleMapper.selectRolesByUserId"
+                        fetchType="lazy">
+            </collection>
+        </resultMap>
+
+        <!--  RoleMapper.xml关键代码   -->
+        <select id="selectRolesByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+            select
+            *
+            from role r,user_role ur
+            where r.id = ur.role_id and ur.user_id = #{id,jdbcType=BIGINT}
+        </select>
+     7、程序运行报错，根据报错结果，使用百度在线翻译，最后定位于MyUser出错，
+        因为UserDetails接口的部分方法与@Data的部分实现方法冲突导致，此时需要
+        将@Data更改为其他组合，并显示设定部分getter，结果如下：
+        @Slf4j
+        @Builder
+        @Setter
+        @ToString
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @JsonIgnoreProperties(value = { "handler" })
+        public class MyUser implements UserDetails{
+            private Long id;
+            private String username;
+            private String password;
+            private Boolean enabled;
+            private Boolean locked;
+            private List<Role> roles;
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                for(Role role:roles){
+                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+                    log.info("用户角色权限："+role.getName());
+                }
+                return authorities;
+            }
+            @Override
+            public boolean isAccountNonExpired() {
+                return true;
+            }
+            @Override
+            public boolean isAccountNonLocked() {
+                if(locked == null)
+                    return true;
+                return !locked;
+            }
+            @Override
+            public boolean isCredentialsNonExpired() {
+                return true;
+            }
+            @Override
+            public boolean isEnabled() {
+                if(enabled == null)
+                    return false;
+                return enabled;
+            }
+            public Long getId() {
+                return id;
+            }
+            @Override
+            public String getUsername() {
+                return username;
+            }
+            @Override
+            public String getPassword() {
+                return password;
+            }
+
+            public Boolean getLocked() {
+                return locked;
+            }
+            public List<Role> getRoles() {
+                return roles;
+            }
+        }
+     8、创建config配置程序，密码验证前进行了加密，方法二可用于关闭用户验证，直接执行相关web访问，
+     代码如下：
+        @Slf4j
+        @Configuration
+        public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+            final private MyUserService myUserService;
+            @Autowired
+            public WebSecurityConfig(MyUserService myUserService)
+            {
+                this.myUserService = myUserService;
+            }
+            @Bean
+            PasswordEncoder passwordEncoder()
+            {
+                return new BCryptPasswordEncoder();
+            }
+            @Override
+            protected void configure(AuthenticationManagerBuilder auth) throws Exception
+            {
+                auth.userDetailsService(myUserService);
+            }
+            @Override
+            protected void configure(HttpSecurity http) throws Exception
+            {
+                log.info(http.authorizeRequests().toString());
+                http.authorizeRequests()
+                        //"/guest/**"接口允许所有人访问，包括未登录的人
+                        .antMatchers("/myusers/**").permitAll()
+                        //"/students/**"接口允许只能被拥有admin角色的用户访问
+                        .antMatchers("/students/**").hasRole("admin")
+                        //"/teachers/**"接口允许只能被拥有admin角色的用户访问
+                        .antMatchers("/teachers/**").hasRole("admin")
+                        //允许登录用户访问。
+                        .anyRequest().authenticated()
+                        .and()
+                        .formLogin()
+                        //登录页面login
+                        .loginProcessingUrl("/login").permitAll()
+                        .and()
+                        //跨站请求伪造不可用
+                        .csrf().disable();
+                //方法二：关闭验证,追加http.csrf().disable()
+        //        http.authorizeRequests().anyRequest().permitAll().and().logout().permitAll();
+        //        http.csrf().disable();
+            }
+        }
+     9、MyUserService代码有两个要点，一是插入用户记录时需加密后保存到数据库
+     二是验证时输入的密码需要加密，二者加密使用同一算法，如下：
+         @Slf4j
+         @Service
+         public class MyUserService implements UserDetailsService {
+             final private MyUserMapper myUserMapper;
+             @Autowired
+             public MyUserService(MyUserMapper myUserMapper)
+             {
+                 this.myUserMapper = myUserMapper;
+             }
+
+             public int deleteByPrimaryKey(Long id)
+             {
+                 return myUserMapper.deleteByPrimaryKey(id);
+             }
+
+             public int insert(MyUser record)
+             {
+                 log.info("插入记录："+record);
+                 //密码加密
+                 BCryptPasswordEncoder encoding = new BCryptPasswordEncoder();
+                 record.setPassword(encoding.encode(record.getPassword()));
+                 log.info("密码加密后结果："+record);
+                 return myUserMapper.insert(record);
+             }
+
+             public int insertSelective(MyUser record)
+             {
+                 log.info("插入记录："+record);
+                 //密码加密
+                 BCryptPasswordEncoder encoding = new BCryptPasswordEncoder();
+                 record.setPassword(encoding.encode(record.getPassword()));
+                 log.info("密码加密后结果："+record);
+                 return myUserMapper.insertSelective(record);
+                 //上述添加只添加myuser表中相关属性，未处理record中关于role相关设置。如需完善需添加相关内容
+
+             }
+
+             public MyUser selectByPrimaryKey(Long id)
+             {
+                 return myUserMapper.selectByPrimaryKey(id);
+             }
+
+             public int updateByPrimaryKeySelective(MyUser record)
+             {
+                 return myUserMapper.updateByPrimaryKeySelective(record);
+             }
+
+             public int updateByPrimaryKey(MyUser record)
+             {
+                 return myUserMapper.updateByPrimaryKey(record);
+             }
+
+             //以下为手动添加
+             public List<MyUser> selectMyUser(MyUser myUser)
+             {
+                 log.info("运行至service"+myUser);
+                 return myUserMapper.selectMyUser(myUser);
+             }
+
+             public int deleteMyUser(MyUser myUser)
+             {
+                 return myUserMapper.deleteMyUser(myUser);
+             }
+
+
+             //覆盖方法
+             @Override
+             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                 log.info("开始登录测试。");
+                 MyUser myUser = myUserMapper.loadMyUserByUsername(username);
+         //        log.info("测试登录验证。");
+                 if(myUser == null)
+                 {
+                     throw new UsernameNotFoundException("账户不存在！");
+                 }else
+                 {
+                     log.info("账户存在"+myUser.toString());
+                 }
+                 //方法一：隐藏实现了设置roles，重点在于设置roles时需加"ROLE_"前缀。
+                 // myUser.setRoles(myUser.getRoles());
+                 return myUser;
+
+                 //修改重点。方法二：显示实现接口UserDetails的类，并设置roles为myUser.getAuthorities(),
+         //        UserDetails	user = new User(myUser.getUsername(), myUser.getPassword(), true, true, true, true,myUser.getAuthorities());
+         //        return user;
+             }
+         }
+     10、关闭密码验证，进行用户、权限管理，即操作myuser、user_role、role表。
+     11、使用浏览器访问student，验证spring security设置的有效性。
+六、界面设计
+    1、login.html页面设计，使用dreamweaver进行效果设计。
+    2、引入thymeleaf相关依赖
+
+
+
+
 
 
 
