@@ -2,11 +2,13 @@ package com.study.scoremanage.Service;
 
 import com.study.scoremanage.Mapper.StudentMapper;
 import com.study.scoremanage.Model.Student;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class StudentService {
     final private StudentMapper studentMapper;
@@ -50,6 +52,7 @@ public class StudentService {
     public List<Student> GetStudent(Student student)
     {
         //读取学生信息
+        log.info("service测试"+student.toString());
         return studentMapper.selectStudent(student);
     }
 
