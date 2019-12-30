@@ -48,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 //登录页面login
+//                .loginPage("/login").permitAll()
                 .loginProcessingUrl("/login").permitAll()
                 .and()
                 //跨站请求伪造不可用
