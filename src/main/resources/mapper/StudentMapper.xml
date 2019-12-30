@@ -12,7 +12,7 @@
         <result column="banjiname" jdbcType="VARCHAR" property="banjiname" />
         <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
         <collection property="academicrecords" javaType="ArrayList"
-                    column="id"
+                    column="studentid"
                     ofType="com.study.scoremanage.Model.Academicrecord"
                     select="com.study.scoremanage.Mapper.AcademicrecordMapper.selectByStudentId"
                     fetchType="lazy">
