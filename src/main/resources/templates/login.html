@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- thymeleaf模板必须引入 -->
+<!-- thymeleaf模板必须引入 -->
 <head>
     <meta charset="UTF-8">
     <title>登录页面</title>
@@ -11,7 +13,7 @@
             font-size: 22px;
             background-color: cadetblue;
         }
-        #username,#password {
+        text,password {
             border:1px solid #ccc;
             height: 22px;
             width: 380px;
@@ -30,10 +32,17 @@
 <body>
 <div class="center">
     <h1>自定义登录页面</h1>
-    <form method="post" action="/login">
-        用户名：<input type="text" id="username" />
-        密码:<input type="password" id="password" />
-        <input value="登录" type="submit" />
+    <!--<form method="post" action="/authentication/form">-->
+        <!--用户名：<input type="text" id="username" />-->
+        <!--密码:<input type="password" id="password" />-->
+        <!--<input value="登录" type="submit" />-->
+    <!--</form>-->
+    <form th:action="@{/login}" method="post" >
+        <input th:text="用户名" type="text" name="username" />
+        <input th:text="密码" type="password" name="password" />
+        <button type="submit" >提交</button>
+        <!-- ${session?.SPRING_SECURITY_LAST_EXCEPTION?.message} security自带的错误提示信息 -->
+        <p th:if="${param.error}" th:text="${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}" ></p>
     </form>
 </div>
 </body>

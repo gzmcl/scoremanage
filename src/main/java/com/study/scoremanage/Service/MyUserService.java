@@ -82,7 +82,7 @@ public class MyUserService implements UserDetailsService {
     //覆盖方法
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("开始登录测试。");
+        log.info("调用myuserservice的loaduserbyusername方法。登录用户名："+username);
         MyUser myUser = myUserMapper.loadMyUserByUsername(username);
 //        log.info("测试登录验证。");
         if(myUser == null)

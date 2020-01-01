@@ -6,12 +6,12 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-  thymeleaf:
-    prefix: classpath:/templates/
-    servlet:
-      content-type: text/html
-    suffix: .html
-    encoding: utf-8
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    servlet:
+#      content-type: text/html
+#    suffix: .html
+#    encoding: utf-8
 #  mvc:
 #    date-format: yyyy-MM-dd HH:mm:ss
 #  jackson:
