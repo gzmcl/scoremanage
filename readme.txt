@@ -718,6 +718,47 @@
 六、界面设计
     1、login.html页面设计，使用dreamweaver进行效果设计。
     2、引入thymeleaf相关依赖
+    3、在传统WEB工程开发时，路径的处理操作是有点麻烦的。SpringBoot中为我们简化了路径的处理。
+    在页面中可以通过“@{路径}”来引用。页面之间的跳转也能通过@{}来实现。
+    4、模版开发框架里面是不提倡使用内置对象的，但是很多情况下依然需要使用内置对象进行处理，
+     所以下面来看下如何在页面中使用JSP内置对象。
+     （1）在控制器里面增加一个方法，这个方法将采用内置对象的形式传递属性。
+         @RequestMapping(value = "/inner", method = RequestMethod.GET)
+         public String inner(HttpServletRequest request, Model model) {
+             request.setAttribute("requestMessage", "springboot-request");
+             request.getSession().setAttribute("sessionMessage", "springboot-session");
+             request.getServletContext().setAttribute("applicationMessage",
+                     "springboot-application");
+             model.addAttribute("url", "www.baidu.cn");
+             request.setAttribute("url2",
+                     "<span style='color:red'>www.baidu.cn</span>");
+             return "show_inner";
+         }
+     （2）在页面之中如果要想访问不同属性范围中的内容，则可以采用如下的做法完成
+        <!DOCTYPE HTML>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+            <title>SpringBoot模版渲染</title>
+            <script type="text/javascript" th:src="@{/js/main.js}"></script>
+            <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+        </head>
+        <body>
+            <p th:text="${#httpServletRequest.getRemoteAddr()}"/>
+            <p th:text="${#httpServletRequest.getAttribute('requestMessage')}"/>
+            <p th:text="${#httpSession.getId()}"/>
+            <p th:text="${#httpServletRequest.getServletContext().getRealPath('/')}"/>
+            <hr/>
+            <p th:text="'requestMessage = ' + ${requestMessage}"/>
+            <p th:text="'sessionMessage = ' + ${session.sessionMessage}"/>
+            <p th:text="'applicationMessage = ' + ${application.applicationMessage}"/>
+        </body>
+        </html>
+     5、快速开发做法
+         (1)将静态网页模板，复制到resource/static目录下
+         (2)经入口中的路径引用，修改为@{路径}。
+         (3)导入例子路径：“bootstrap网站后台ui管理系统免费下载\dgfp_43_hs\”。
+         (4)修改index.html相关内容，并保存为myindex.html。
+
 
 
 
