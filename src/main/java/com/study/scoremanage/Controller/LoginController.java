@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginController {
     @RequestMapping("/bootstrap/myindex")
     public ModelAndView index(){
-        return new ModelAndView("/bootstrap/myindex");
+        return new ModelAndView("/bootstrap3/myindex");
     }
 
     @RequestMapping("/index2")
@@ -22,8 +22,8 @@ public class LoginController {
     @RequestMapping("/test")
     public ModelAndView test(){
         log.info("跳转到/test");
-        return new ModelAndView("/bootstrap/t2");
-//        return "/bootstrap/t2";
+        return new ModelAndView("/bootstrap3/t2");
+//        return "/bootstrap3/t2";
     }
 
     /**
@@ -34,6 +34,7 @@ public class LoginController {
      */
     @GetMapping("/login")
     public ModelAndView login(String error){
+        log.info("登录");
         ModelAndView modelAndView = new ModelAndView("/login");
         modelAndView.addObject("error", error);
         return modelAndView;

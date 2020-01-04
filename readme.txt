@@ -758,6 +758,7 @@
          (2)经入口中的路径引用，修改为@{路径}。
          (3)导入例子路径：“bootstrap网站后台ui管理系统免费下载\dgfp_43_hs\”。
          (4)修改index.html相关内容，并保存为myindex.html。
+         (5)文件夹路径中存在多个bootstrap导致出现莫名其妙错误，后将父路径修改为bootstrap3问题消除
 
 
 
