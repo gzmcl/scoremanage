@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,18 +50,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        //解决静态资源被拦截的问题
+        web.ignoring().antMatchers("/bootstrap3/images/**","/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception
     {
         log.info(http.authorizeRequests().toString());
 
         http.cors().and().csrf().disable();
         http
+                .authorizeRequests().antMatchers("/**/*.css","/bootstrap3/images/**","/**/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()
                 //使用form表单post方式进行登录w
-                .formLogin()
+                .and().formLogin()
                 //登录页面为自定义的登录页面
                 .loginPage("/login")
-                //设置登录成功跳转页面，error=true控制页面错误信息的展示
-//                .successForwardUrl("/index2").failureUrl("/login?error=true")
                 //设置登录成功后跳转到登录前页面
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
@@ -73,12 +79,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         response.sendRedirect(url);
                     }
                 })
-
-//                .successForwardUrl("/test").failureUrl("/login?error=true")
                 .permitAll()
+//                .and().authorizeRequests().antMatchers("/**/*.css","/bootstrap3/images/**","/**/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()
                 .and()
                 //允许不登陆就可以访问的方法，多个用逗号分隔
-//                .authorizeRequests().antMatchers("/bootstrap/**").permitAll()
+//                .authorizeRequests().antMatchers("/bootstrap3/images/**","/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()
                 //其他的需要授权后访问
                 .authorizeRequests().anyRequest().authenticated();
 //
