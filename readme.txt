@@ -835,7 +835,36 @@
             //        filter.setEncoding("UTF-8"); filter.setForceEncoding(true);
                 }
             }
-七、
+七、bootstrap局部更新的尝试
+    1、bootstrap支持使用iframe
+    2、使用thymeleaf的include引入公共页面功能
+        （1）首先建立一个公共页面common_header.html
+        （2）在这个页面使用了一个标签fragment=“common_js_css”，可以理解是在
+         这个页面中某个代码块的ID,此页面可以写多个fragment。内容如下：
+         <!DOCTYPE HTML>
+         <html xmlns:th="http://www.thymeleaf.org">
+         <head>
+         <title>公共页面</title>
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+         </head>
+         <body>
+            <div th:fragment=”common_js_css“>
+            <script type=”text/javascript” th:src=”@{/plugins/jquery/jquery-3.0.2.js}”>
+            </script>
+            <link href=”/css/style.css” rel=”stylesheet” type=”text/css”>
+            </div>
+        </body>
+        </html>
+        （3）在具体需要使用的页面，比如index.htm中这样使用，在需要的地方直接引入：
+        <span th:replace=”common_header::common_js_css“></span>
+        其中：common_header是需要引入页面的html名称，后面common_js_css是需要引入的代码块的ID,
+        如果2个页面不在同一个页面，需要加路径。
+        （4）replace，类似功能的还有下面2个,有所区别：
+               th:insert：保留自己的主标签，保留th:fragment的主标签。
+               th:replace：不要自己的主标签，保留th:fragment的主标签。
+               th:include：保留自己的主标签，不要th:fragment的主标签。（官方3.0后不推荐）
+
 
 
 
