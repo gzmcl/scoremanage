@@ -62,7 +62,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().and().csrf().disable();
         http
-                .authorizeRequests().antMatchers("/**/*.css","/bootstrap3/images/**","/**/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/**/*.css","/bootstrap3/**","/bootstrap4/**").permitAll()
                 //使用form表单post方式进行登录w
                 .and().formLogin()
                 //登录页面为自定义的登录页面
@@ -80,7 +81,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     }
                 })
                 .permitAll()
-//                .and().authorizeRequests().antMatchers("/**/*.css","/bootstrap3/images/**","/**/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()
                 .and()
                 //允许不登陆就可以访问的方法，多个用逗号分隔
 //                .authorizeRequests().antMatchers("/bootstrap3/images/**","/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**").permitAll()

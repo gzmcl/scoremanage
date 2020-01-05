@@ -9,20 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 @Controller
 public class LoginController {
-    @RequestMapping("/bootstrap/myindex")
-    public ModelAndView index(){
-        return new ModelAndView("/bootstrap3/myindex");
-    }
-
-    @RequestMapping("/index2")
-    public ModelAndView index2(){
-        return new ModelAndView("/index2");
-    }
-
     @RequestMapping("/test")
     public ModelAndView test(){
         log.info("跳转到/test");
-        return new ModelAndView("/bootstrap3/t2");
+        return new ModelAndView("/bootstrap4/index");
 //        return "/bootstrap3/t2";
     }
 

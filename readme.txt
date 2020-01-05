@@ -755,11 +755,87 @@
         </html>
      5、快速开发做法
          (1)将静态网页模板，复制到resource/static目录下
-         (2)经入口中的路径引用，修改为@{路径}。
-         (3)导入例子路径：“bootstrap网站后台ui管理系统免费下载\dgfp_43_hs\”。
-         (4)修改index.html相关内容，并保存为myindex.html。
-         (5)文件夹路径中存在多个bootstrap导致出现莫名其妙错误，后将父路径修改为bootstrap3问题消除
+         (2)导入例子路径：“bootstrap网站后台ui管理系统免费下载\dgfp_43_hs\”。
+         (3)将部分html文件复制到templates目录下，可另外创建目录，此时无法通过直接路径访问
+            需通过controller跳转，注意controller无法跳转到静态页面，即无法直接访问static
+            路径下的html文件。
+         (4)文件夹路径中存在多个bootstrap导致出现莫名其妙错误，后将父路径修改为bootstrap3问题消除
+            另外templates下的html文件引用静态页面时需使用绝对路径。
+         (5)自定义login页面时注意三点：一是login页面存放在templates目录下；二是login页面不能引用
+            static目录下的静态资源，否则静态资源未登录情况下回自动跳转；三是WebSecurityConfig中
+            注册登录页面；四是controller中创建跳转/login。其中WebSecurityConfig关键代码如下
+            @Slf4j
+            @Configuration
+            public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+                final private MyUserService myUserService;
+                private final MyAuthenctiationSuccessHandler myAuthenctiationSuccessHandler;
+                @Autowired
+                public WebSecurityConfig(MyUserService myUserService,MyAuthenctiationSuccessHandler myAuthenctiationSuccessHandler)
+                {
+                    this.myUserService = myUserService;
+                    this.myAuthenctiationSuccessHandler = myAuthenctiationSuccessHandler;
+                }
+                @Bean
+                PasswordEncoder passwordEncoder()
+                {
+                    return new BCryptPasswordEncoder();
+                }
 
+                @Override
+                protected void configure(AuthenticationManagerBuilder auth) throws Exception
+                {
+                    auth.userDetailsService(myUserService);
+                }
+
+                @Override
+                public void configure(WebSecurity web) throws Exception {
+                    //解决静态资源被拦截的问题
+                    web.ignoring().antMatchers("/bootstrap3/images/**","/bootstrap3/lib/**","/bootstrap3/javascripts/**","/bootstrap3/stylesheets/**");
+                }
+
+                @Override
+                protected void configure(HttpSecurity http) throws Exception
+                {
+                    log.info(http.authorizeRequests().toString());
+
+                    http.cors().and().csrf().disable();
+                    http
+                            .authorizeRequests().antMatchers("/**/*.css","/bootstrap3/**","/bootstrap4/**").permitAll()
+                            //使用form表单post方式进行登录w
+                            .and().formLogin()
+                            //登录页面为自定义的登录页面
+                            .loginPage("/login")
+                            //设置登录成功后跳转到登录前页面
+                            .successHandler(new AuthenticationSuccessHandler() {
+                                @Override
+                                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                                                    Authentication authentication) throws IOException, ServletException {
+                                    response.setContentType("application/json;charset=utf-8");
+                                    RequestCache cache = new HttpSessionRequestCache();
+                                    SavedRequest savedRequest = cache.getRequest(request, response);
+                                    String url = savedRequest.getRedirectUrl();
+                                    response.sendRedirect(url);
+                                }
+                            })
+                            .permitAll()
+                            .and()
+                            //其他的需要授权后访问
+                            .authorizeRequests().anyRequest().authenticated();
+            //
+            //        //session管理,失效后跳转
+            //        http.sessionManagement().invalidSessionUrl("/login");
+            //        //单用户登录，如果有一个登录了，同一个用户在其他地方登录将前一个剔除下线
+            //        //http.sessionManagement().maximumSessions(1).expiredSessionStrategy(expiredSessionStrategy());
+            //        //单用户登录，如果有一个登录了，同一个用户在其他地方不能登录
+            //        http.sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(true);
+            //        //退出时情况cookies
+            //        http.logout().deleteCookies("JESSIONID");
+            //        //解决中文乱码问题
+            //        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+            //        filter.setEncoding("UTF-8"); filter.setForceEncoding(true);
+                }
+            }
+七、
 
 
 
