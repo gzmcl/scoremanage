@@ -719,7 +719,40 @@
     1、login.html页面设计，使用dreamweaver进行效果设计。
     2、引入thymeleaf相关依赖
     3、在传统WEB工程开发时，路径的处理操作是有点麻烦的。SpringBoot中为我们简化了路径的处理。
-    在页面中可以通过“@{路径}”来引用。页面之间的跳转也能通过@{}来实现。
+    在页面中可以通过“@{路径}”来引用。页面之间的跳转也能通过@{}来实现。成功的例子如下：
+    <!DOCTYPE html>
+    <html lang="en">
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <title>Bootstrap Admin</title>
+        <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link rel="stylesheet" type="text/css" href="../static/bootstrap3/lib/bootstrap/css/bootstrap.css" th:href="@{bootstrap3/lib/bootstrap/css/bootstrap.css}">
+        <!--<link rel="stylesheet" type="text/css" href="../static/bootstrap3/lib/bootstrap/css/bootstrap-responsive.css">-->
+        <link rel="stylesheet" type="text/css" href="../static/bootstrap3/stylesheets/theme.css" th:href="@{bootstrap3/stylesheets/theme.css}">
+        <link rel="stylesheet" href="../static/bootstrap3/lib/font-awesome/css/font-awesome.css" th:href="@{bootstrap3/lib/font-awesome/css/font-awesome.css}">
+        <script src="../static/bootstrap3/lib/jquery-1.8.1.min.js" th:src="@{bootstrap3/lib/jquery-1.8.1.min.js}" type="text/javascript"></script>
+        省略部分网页代码...............
+            <form  th:action="@{/login}" method="post" >
+                <label>Username</label>
+                <input type="text" class="span12" name="username">
+                <label>Password</label>
+                <input type="password" class="span12" name="password">
+                <!--<a href="myindex.html" class="btn btn-primary pull-right">Sign In</a>-->
+                <button class="btn btn-primary pull-right">登录</button>
+                <label class="remember-me"><input type="checkbox"> Remember me</label>
+                <div class="clearfix"></div>
+            </form>
+        省略部分网页代码..............
+        <script src="../static/bootstrap3/lib/bootstrap/js/bootstrap.js" th:src="@{bootstrap3/lib/bootstrap/js/bootstrap.js}"></script>
+        </div>
+        </body>
+        </html>
+
     4、模版开发框架里面是不提倡使用内置对象的，但是很多情况下依然需要使用内置对象进行处理，
      所以下面来看下如何在页面中使用JSP内置对象。
      （1）在控制器里面增加一个方法，这个方法将采用内置对象的形式传递属性。

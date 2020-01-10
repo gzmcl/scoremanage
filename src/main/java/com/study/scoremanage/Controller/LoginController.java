@@ -25,7 +25,7 @@ public class LoginController {
     @GetMapping("/login")
     public ModelAndView login(String error){
         log.info("登录");
-        ModelAndView modelAndView = new ModelAndView("/login");
+        ModelAndView modelAndView = new ModelAndView("/login2");
         modelAndView.addObject("error", error);
         return modelAndView;
     }
